@@ -59,3 +59,5 @@ var otherDatabase = otherApp.database();
 	date: new Date().toISOString()
 });
 `````
+Le reste des stockages des données s'effectue au fil du temps et de l'expérience utilisateur : 
+Ligne 405-409 : https://github.com/MathieuDuboy/BotDesign/blob/master/index.js#L405-L409
