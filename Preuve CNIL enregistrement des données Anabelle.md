@@ -1,10 +1,9 @@
 ## Preuve CNIL enregistrement des données Anabelle
 
 - Dans [index.js](https://github.com/MathieuDuboy/BotDesign/blob/master/index.js), le code permettant de stocker sur la base de données principale contenant toutes les datas est : 
-
 `````
-var checkAndCreate = (sessionId, fbid, prenom, nom, genre) = {
-  return new Promise((resolve, reject) = {
+var checkAndCreate = (sessionId, fbid, prenom, nom, genre) => {
+  return new Promise((resolve, reject) => {
     var userz = firebase.database().ref().child("accounts").orderByChild("fbid").equalTo(fbid).once("value").then(
       function(snapshot) {
         var exists = (snapshot.val() !== null);
@@ -19,8 +18,8 @@ var checkAndCreate = (sessionId, fbid, prenom, nom, genre) = {
             resolve(childSnapshot.val().dernier_message);
           });
         } else {
-          admin.auth().createCustomToken(fbid).then((customToken) = firebase.auth().signInWithCustomToken(
-            customToken)).then(() = {
+          admin.auth().createCustomToken(fbid).then((customToken) => firebase.auth().signInWithCustomToken(
+            customToken)).then(() => {
             var user2 = firebase.auth().currentUser;
             var keyid = firebase.database().ref().child('accounts').push();
             sessions[sessionId].key = keyid.key;
@@ -36,23 +35,27 @@ var checkAndCreate = (sessionId, fbid, prenom, nom, genre) = {
               genre: genre,
               date: new Date().toISOString()
             });
-            var otherDatabase = otherApp.database();
-            otherDatabase.ref().child('accounts').child(keyid.key).set({
-              nb_agression: 0,
-              dernier_message: new Date(),
-              genre: genre,
-              date: new Date().toISOString()
-            });
+            
             resolve(keyid.key);
-          }).catch((error) = {
+          }).catch((error) => {
             console.log("erreur from firebas 10");
             reject(error)
           });
         }
-      }).catch((error) = {
+      }).catch((error) => {
       console.log("erreur from firebas new");
       reject(error)
     });
   });
 };
+`````
+Au meme moment, le stockage dans la deuxième base de données se fait de manière anonymisée : 
+`````
+var otherDatabase = otherApp.database();
+	otherDatabase.ref().child('accounts').child(keyid.key).set({
+	nb_agression: 0,
+	dernier_message: new Date(),
+	genre: genre,
+	date: new Date().toISOString()
+});
 `````
