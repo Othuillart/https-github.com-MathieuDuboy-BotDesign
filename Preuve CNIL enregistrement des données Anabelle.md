@@ -66,3 +66,5 @@ Ligne 426-443 : https://github.com/MathieuDuboy/BotDesign/blob/master/index.js#L
 Ligne 447-458 : https://github.com/MathieuDuboy/BotDesign/blob/master/index.js#L447-L458<br />
 Ligne 463-480 : https://github.com/MathieuDuboy/BotDesign/blob/master/index.js#L463-L480<br />
 Ligne 482-501 : https://github.com/MathieuDuboy/BotDesign/blob/master/index.js#L482-L501<br />
+
+et de manière ponctuelle lors des intéractions avec le ChatBot.
