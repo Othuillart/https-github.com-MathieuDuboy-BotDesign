@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="fr" >
+<head>
+  <meta charset="UTF-8">
+  <title>Dentist Chat</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/meyer-reset/2.0/reset.min.css">
+    <link rel='stylesheet prefetch' href='https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css'>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+    body {
+        overflow: hidden;
+    }
+
+    html, body {
+    height: 100%;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    }
+    header {
+    z-index:1000;
+    width: 100vw;
+    max-height:120px;
+    float: left;
+    background: #F2F5F8;
+    border-top-right-radius: 5px;
+    border-bottom-right-radius: 5px;
+    color: #434651;
+    position: fixed;
+    top: 0;
+    }
+    .chat-header {
+      padding: 20px;
+      border-bottom: 2px solid white;
+    }
+    .chat-header img {
+      float: left;
+    }
+    .chat-header .chat-about {
+      float: left;
+      padding-left: 10px;
+      margin-top: 6px;
+    }
+    .chat-header .chat-with {
+      font-weight: bold;
+      font-size: 18px;
+    }
+    .chat-header .chat-num-messages {
+      color: #92959E;
+    }
+    .chat-header .fa-undo {
+      float: right;
+      font-size: 20px;
+      margin-top: 12px;
+      color:Tomato;
+    }
+    #content {
+        height: calc(100% - 180px);
+        max-height: calc(100% - 180px);
+        overflow-y: scroll;
+        padding: 0px 4% !important;
+        margin-top: 100px !important;
+    }
+    footer {
+        z-index:1000;
+      max-height:80px;
+      width: 100vw;
+      float: left;
+      background: #F2F5F8;
+      border-top-right-radius: 5px;
+      border-bottom-right-radius: 5px;
+      color: #434651;
+      position: fixed;
+      bottom: 0;
+    }
+
+    .chat-footer {
+      padding: 10px;
+      border-bottom: 2px solid white;
+    }
+
+    .chat-footer .chat-about {
+      float: left;
+      padding-left: 10px;
+      margin-top: 6px;
+    }
+    .chat-footer .chat-with {
+      font-weight: bold;
+      font-size: 18px;
+    }
+    .chat-footer .chat-num-messages {
+      color: #92959E;
+    }
+    .chat-footer .fa-star {
+      float: right;
+      color: #D8DADF;
+      font-size: 20px;
+      margin-top: 12px;
+    }
+
+    .chat-history {
+
+    }
+    .chat-history .message-data {
+      margin-bottom: 15px;
+    }
+    .chat-history .message-data-time {
+      color: #a8aab1;
+      padding-left: 6px;
+    }
+    .chat-history .message {
+      color: white;
+      padding: 18px 20px;
+      line-height: 26px;
+      font-size: 18px;
+      border-radius: 7px;
+      margin-bottom: 10px;
+      width: 90%;
+      position: relative;
+    }
+    .chat-history .message:after {
+      bottom: 100%;
+      left: 7%;
+      border: solid transparent;
+      content: " ";
+      height: 0;
+      width: 0;
+      position: absolute;
+      pointer-events: none;
+      border-bottom-color: #34409f;
+      border-width: 10px;
+      margin-left: -10px;
+    }
+    .chat-history .my-message {
+      background: #34409f;
+    }
+    .chat-history .other-message {
+      background: #424242;
+    }
+    .chat-history .other-message:after {
+      border-bottom-color: #424242;
+      left: 93%;
+    }
+    ::-webkit-scrollbar
+    {
+        width: 0px;
+    }
+    ::-webkit-scrollbar-track-piece
+    {
+        background-color: transparent;
+        -webkit-border-radius: 6px;
+    }
+    </style>
+</head>
+
+<body>
+  <header >
+    <div class="chat-header clearfix">
+      <img class="avatar" id="avatar" src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/195612/chat_avatar_01_green.jpg" alt="avatar" />
+
+      <div class="chat-about">
+        <div class="chat-with"></div>
+        <div class="chat-num-messages"></div>
+      </div>
+      <i id="back" class="fa fa-undo" style="cursor: pointer;"></i>
+    </div>
+  </header>
+  <div id="content">
+    <div class="chat-history" id="chat-history">
+      <ul class="history" id="history">
+      </ul>
+    </div>
+  </div>
+  <footer>
+    <div class="chat-footer clearfix">
+      <div class="chat-message clearfix " style="display: flex;padding:0px;float:right;cursor: pointer;width:100%">
+        <input name="message-to-send" id="message-to-send" placeholder="Write your message" style="
+        border: none;cursor: pointer;
+        padding: 10px 20px;
+        font-size:18px;
+        width:100%;
+        margin-bottom: 2px;
+        border-radius: 25px;">
+        <button id="send_un_message" style="margin-left:5px;cursor: pointer;
+        border:none;
+        border-radius: 25px;
+        padding: 10px 20px;
+        margin-bottom: 2px;
+        font-family: Helvetica, Arial, sans-serif;
+        background:#424242;
+        "><i class="fa fa-paper-plane" style="color:white"></i></button>
+      </div>
+    </div>
+  </footer>
+  <script id="message-template" type="text/x-handlebars-template">
+    <li class="clearfix">
+      <div class="message-data align-right">
+        <span class="message-data-time" >{{time}}, Today</span> &nbsp; &nbsp;
+        <span class="message-data-name" >You</span> <i class="fa fa-circle me"></i>
+      </div>
+      <div class="message other-message float-right">
+        {{messageOutput}}
+      </div>
+    </li>
+  </script>
+
+  <script id="message-response-template" type="text/x-handlebars-template">
+    <li>
+      <div class="message-data">
+        <span class="message-data-name"><i class="fa fa-circle online"></i> {{nom_docteur}}</span>
+        <span class="message-data-time">{{time}}, Today</span>
+      </div>
+
+        <div class="message my-message">
+          <span id=A{{id}}>{{{response_dot}}}</span>
+          <span id=B{{id}}>{{#each response_text}} {{{this}}}<br />{{/each}}</span>
+        </div>
+    </li>
+  </script>
+  <script id="message-response-template-quickreplies" type="text/x-handlebars-template">
+    <li>
+      <div class="message-data">
+        <span class="message-data-name"><i class="fa fa-circle online"></i> {{nom_docteur}}</span>
+        <span class="message-data-time">{{time}}, Today</span>
+      </div>
+      <div class="message my-message">
+        <span id=A{{id}}>{{{response_dot}}}</span>
+        <span id=B{{id}}>{{#each response_text}} {{{this}}}<br />{{/each}}</span>
+      </div>
+        <span id=C{{id}} style="width: 100%;overflow: auto;">
+          <ul class=hide_show_quick{{id}} style="white-space:nowrap;margin-bottom: 10px; width:100%;overflow: scroll;">
+            {{#each response_quick}}
+              <li class="quick_replies" style="cursor:pointer">{{{this}}}</li>
+            {{/each}}
+          </ul>
+      </span>
+    </li>
+  </script>
+
+  <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js'></script>
+  <script src='https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/3.0.0/handlebars.min.js'></script>
+  <script src='https://cdnjs.cloudflare.com/ajax/libs/list.js/1.1.1/list.min.js'></script>
+  <script src="js/sweetalert.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/4.12.1/firebase.js"></script>
+  <script src="js/script.js"></script>
+</body>
+
+</html>
