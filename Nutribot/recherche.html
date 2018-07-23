@@ -1,0 +1,316 @@
+<!doctype html>
+<html class="no-js" lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <title>Recherche</title>
+    <style>
+    body {
+      font-family: 'Open Sans', sans-serif;
+    }
+
+    h1, h2, h3, h4, h5, h6 {
+      font-weight: 300;
+    }
+
+    p {
+      color: #999;
+    }
+
+    strong {
+      color: #333;
+    }
+
+    #wrapper {
+      width: 100%;
+      max-width: 600px;
+      margin: 0 auto;
+      text-align: center;
+      padding: 30px 0;
+    }
+
+    .page-head-image {
+
+    }
+
+    .page-head-image img {
+      border-radius: 50%;
+    }
+
+    #form-trabalhe {
+      margin-top: 30px;
+      text-align: left;
+    }
+
+    label {
+      font-weight: normal;
+      margin-top: 15px;
+    }
+
+    input {
+      border: 2px solid #CCC !important;
+      height: 35px;
+      border-radius: 3px;
+      max-width: 100%;
+    }
+
+    .input-group-addon {
+      border: 2px solid #CCC !important;
+      border-right: 0px !important;
+    }
+
+    .btn {
+      border: 0;
+      border-radius: 3px;
+      margin-top: 20px;
+    }
+
+    .form-group {
+      margin-bottom: 0;
+      text-align: left;
+    }
+    /*
+    // Listrap v1.0, by Gustavo Gondim (http://github.com/ggondim)
+    // Licenced under MIT License
+    // For updates, improvements and issues, see https://github.com/inosoftbr/listrap
+    */
+
+    .listrap {
+                list-style-type: none;
+                margin: 0;
+                padding: 0;
+                cursor: default;
+                -webkit-user-select: none;
+                -khtml-user-select: none;
+                -moz-user-select: none;
+                -ms-user-select: none;
+                user-select: none;
+            }
+
+            .listrap li {
+                margin: 0;
+                padding: 10px;
+            }
+
+            .listrap li.active, .listrap li:hover {
+                background-color: #d9edf7;
+            }
+
+            .listrap strong {
+                margin-left: 10px;
+            }
+
+            .listrap .listrap-toggle {
+                display: inline-block;
+                width: 60px;
+                height: 60px;
+            }
+
+            .listrap .listrap-toggle span {
+                background-color: #428bca;
+                opacity: 0.8;
+                z-index: 100;
+                width: 60px;
+                height: 60px;
+                display: none;
+                position: absolute;
+                border-radius: 50%;
+                text-align: center;
+                line-height: 60px;
+                vertical-align: middle;
+                color: #ffffff;
+            }
+
+            .listrap .listrap-toggle span:before {
+                font-family: 'Glyphicons Halflings';
+                content: "\e013";
+            }
+
+            .listrap li.active .listrap-toggle span {
+                display: block;
+            }
+    </style>
+  </head>
+  <body>
+    <script>
+    (function(d, s, id) {
+    	var js, fjs = d.getElementsByTagName(s)[0];
+    	if (d.getElementById(id)) {
+    		return;
+    	}
+    	js = d.createElement(s);
+    	js.id = id;
+    	js.src = "//connect.facebook.com/en_US/messenger.Extensions.js";
+    	fjs.parentNode.insertBefore(js, fjs);
+    }(document, 'script', 'Messenger'));
+
+    window.extAsyncInit = function() {
+    	document.getElementById("clickMe").onclick = function() {
+      //  alert('ok');
+        var imgurl = $( "#imageurl" ).val();
+        var codez = $( "#codez" ).val();
+      //  var conversation = document.getElementById("conversation").value;
+    		var messageToShare = {
+    			"attachment": {
+    				"type": "template",
+    				"payload": {
+    					"template_type": "generic",
+              "image_aspect_ratio" : "square",
+    					"elements": [{
+    						"title": 'Code : '+codez+'',
+    						"image_url": imgurl,
+    						"subtitle": "Je vais rechercher dans mes circuits toutes les informations sur ce produit !"
+    					}]
+    				}
+    			}
+    		};
+    		MessengerExtensions.beginShareFlow(function success(response) {
+    			// User dismissed without error, but did they
+          //  alert('ok2');
+    			// share the message?
+    			if (response.is_sent) {
+            MessengerExtensions.requestCloseBrowser(function success(ok) {
+              // webview closed
+            //  alert(ok);
+            }, function error(err) {
+              // an error occurred
+            //    alert(ok)
+            });
+    				// The user actually did share.
+    				// Perhaps close the window w/ requestCloseBrowser().
+
+    			} else {}
+    		}, function error(errorCode, errorMessage) {
+    			// An error occurred in the process
+    			//alert(errorMessage);
+    		}, messageToShare, "current_thread");
+
+    };
+    	//document.getElementById("clickMe").disabled = true;
+    	// the Messenger Extensions JS SDK is done loading
+    	MessengerExtensions.getContext('2380672905291498', function success(result) {
+    		//document.getElementById("first-name").innerHTML = result.psid;
+        //  alert('ok'+result.psid);
+
+    	}, function error(result) {
+        //alert('okerreur'+result);
+    		//document.getElementById("conver").innerHTML = result;
+    	});
+    };
+    </script>
+    <div id="wrapper" class="container">
+      <figure class="page-head-image">
+        <img src="logo.png" width="150px"/>
+      </figure>
+      <fieldset>
+        <div class="form-group">
+          <div class="col-md-12">
+            <input id="produit" name="produit" class="form-control" placeholder="Ex : Miel ou Coca-cola" type="text">
+            </div>
+          </div>
+
+
+
+          <div class="form-group">
+            <div class="col-md-12">
+              <button type="button" id="rechercher" class="btn btn-primary btn-lg btn-block info">Rechercher</button>
+            </div>
+          </div>
+      </fieldset>
+      <div class="form-group">
+        <div class="col-md-12" style="text-align:left" id="res">
+        <ul class="listrap">
+            <li>
+              <p style="text-align:center">Recherchez et Selectionnez un produit grâce au formulaire ci-dessus afin de connaître son <b>NutriScore</b> et ses informations nutritionnelles.</p>
+            </li>
+        </ul>
+      </div>
+      </div>
+      <input id="imageurl" value="" type="hidden">
+      <input id="codez" value="" type="hidden">
+  </div>
+  <nav class="fixed-nav" style="text-align:center">
+      <button id="clickMe" style="padding: 1em 5em;
+      color: #fff;
+      text-transform: uppercase;
+      white-space: normal;
+      background: #95c11f;
+      border: none;
+      -webkit-transition: all ease 0.25s;
+      -o-transition: all ease 0.25s;
+      transition: all ease 0.25s;
+      border-radius: 5px;
+      font-weight: 900;">Envoyer</button>
+  </nav>
+
+      <style>
+        .fixed-nav {
+          position: fixed;
+          bottom: 0;
+          left: 0;
+          width: 100%;
+          background-color: #fff;
+
+          white-space: nowrap;
+          height: 60px;
+          box-sizing: border-box;
+          padding: 10px;
+          box-shadow: 0px 3px 6px rgba(0,0,0,0.16),0px 3px 6px rgba(0,0,0,0.23);
+        }
+
+        .fixed-nav ul, .fixed-nav li {
+          display:inline;
+        }
+
+        .fixed-nav a {
+          text-decoration: none;
+          text-transform: uppercase;
+          padding: 17px 10px;
+          color: #333;
+          font-family: arial;
+        }
+
+        .fixed-nav a:hover {
+          background-color: #000;
+          color: #eee;
+        }
+
+        .fixed-nav ul {
+          padding:;
+        }
+        .fixed-nav img {
+          vertical-align: middle;
+        }
+        main {margin-top:55px;}
+      </style>
+  <script>
+  $(function() {
+    $( ".fixed-nav" ).hide();
+    // rechercher
+    $( "#rechercher" ).click(function()  {
+      $( ".fixed-nav" ).hide();
+      $( "#res" ).html('<img src="octo.gif" width="100%">');
+      var produit = $('#produit').val();
+      $.ajax({
+        url: "requetes/search_from_webview.php?produit="+produit,
+      }).done(function(result) {
+        //alert(result);
+        // listrap
+        $( "#res" ).html();
+        $( "#res" ).html(result);
+      });
+      // prends la valeur de l'input
+      // envoyer la requete ajax
+      // afficher le retour dans la div
+    });
+  });
+
+
+
+
+  </script>
+</body>
+</html>

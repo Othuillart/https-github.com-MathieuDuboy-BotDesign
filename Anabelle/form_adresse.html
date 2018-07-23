@@ -1,0 +1,430 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <title>Vos informations</title>
+  <meta name="description" content="">
+  <meta name="author" content="">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <script src="https://www.gstatic.com/firebasejs/4.6.0/firebase.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script>
+  var config = {
+    apiKey: "AIzaSyD9n0awipZ7lrK-MEeTKzoJWmG5p2ToF2M",
+    authDomain: "naturactive-894c1.firebaseapp.com",
+    databaseURL: "https://naturactive-894c1.firebaseio.com",
+    projectId: "naturactive-894c1",
+    storageBucket: "naturactive-894c1.appspot.com",
+    messagingSenderId: "880317619228"
+  };
+  firebase.initializeApp(config);
+  </script>
+  <style>
+  body {
+  font: normal 18px/1.5 "Fira Sans", "Helvetica Neue", sans-serif;
+  background: #f8f4f1;
+  color: #fff;
+  padding: 0px 0;
+  margin-bottom: 65px;
+}
+
+.container {
+  width: 90%;
+  max-width: 1200px;
+  margin: 0 auto;
+  margin-top:10px;
+}
+
+.container * {
+  box-sizing: border-box;
+}
+
+.flex-outer,
+.flex-inner {
+  list-style-type: none;
+  padding: 0;
+}
+
+.flex-outer {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.flex-outer li,
+.flex-inner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.flex-inner {
+  padding: 0 8px;
+  justify-content: space-between;
+}
+
+.flex-outer > li:not(:last-child) {
+  margin-bottom: 20px;
+}
+.flex-outer > li:last-child) {
+  margin-bottom: 60px;
+}
+
+.flex-outer li label,
+.flex-outer li p {
+  padding: 1px;
+  font-weight: 500;
+  letter-spacing: .09em;
+  text-transform: uppercase;
+  color:#000;
+}
+
+.flex-outer > li > label,
+.flex-outer li p {
+  flex: 1 0 120px;
+  max-width: 220px;
+}
+
+.flex-outer > li > label + *,
+.flex-inner {
+  flex: 1 0 220px;
+}
+
+.flex-outer li p {
+  margin: 0;
+}
+
+.flex-outer li input:not([type='checkbox']),
+.flex-outer li textarea {
+  padding: 15px;
+  border: none;
+}
+
+.flex-outer li button {
+  margin-left: auto;
+  padding: 8px 16px;
+  border: none;
+  background: #333;
+  color: #f2f2f2;
+  text-transform: uppercase;
+  letter-spacing: .09em;
+  border-radius: 2px;
+}
+
+.flex-inner li {
+  width: 100px;
+}
+
+.error {
+  border:2px solid red;
+}
+</style>
+</head>
+
+<body>
+<script>
+//document.getElementById("clickMe").disabled = true;
+
+(function(d, s, id) {
+	var js, fjs = d.getElementsByTagName(s)[0];
+	if (d.getElementById(id)) {
+		return;
+	}
+	js = d.createElement(s);
+	js.id = id;
+	js.src = "//connect.facebook.com/en_US/messenger.Extensions.js";
+	fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'Messenger'));
+var firebaseData = [];
+var promesses = [];
+console.log("1");
+function getFirebaseData(endpoint) {
+	return firebase.database().ref('fil/' + endpoint).once("value", function(snapshot) {
+		firebaseData.push(snapshot.val());
+		console.log("oui" + JSON.stringify(snapshot.val()));
+	});
+}
+
+window.extAsyncInit = function() {
+  console.log("2");
+  var id_facebook = "";
+  MessengerExtensions.getContext('219151175318489', function success(result) {
+    console.log("5");
+    //document.getElementById("first-name").innerHTML = result.psid;
+    id_facebook = result.psid;
+    firebase.database().ref('accounts').orderByChild('fbid').equalTo(result.psid).once('child_added', function(snapshot) {
+      //alert("Le nom : " + JSON.stringify(snapshot.val().nom));
+      //document.getElementById("first-name").innerHTML = snapshot;
+      lacle = snapshot.key;
+      var conv = "";
+      var newref = firebase.database().ref('accounts/' + lacle + '/fil').once('value', function(snapshot2) {
+        snapshot2.forEach(function(value) {
+          promesses.push(getFirebaseData(value.key));
+        })
+        Promise.all(promesses).then(function(snapshots) {
+          var a = 0;
+          snapshots.forEach(function(value) {
+            //console.log(firebaseData[a].date+' : '+firebaseData[a].message);
+            conv += firebaseData[a].date + ' : ' + firebaseData[a].message + '<br />';
+            a++;
+          })
+          firebase.database().ref('accounts/' + lacle).once('value', function(snapshot5) {
+
+            var nom = snapshot5.val().nom;
+            var prenom = snapshot5.val().prenom;
+            var adresse = (snapshot5.val().adresse !== undefined );
+
+            var ville = (snapshot5.val().ville !== undefined);
+            var telephone = (snapshot5.val().telephone !== undefined);
+            var email = (snapshot5.val().email !== undefined);
+
+            if(adresse) {
+              document.getElementById("adresse").value = snapshot5.val().adresse;
+            }
+            if(ville) {
+              document.getElementById("ville").value = snapshot5.val().ville;
+            }
+            if(telephone) {
+              document.getElementById("telephone").value = snapshot5.val().telephone;
+            }
+            if(email) {
+              document.getElementById("email").value = snapshot5.val().email;
+            }
+            document.getElementById("name").value = nom + ' ' + prenom;
+            document.getElementById("conversation").value = conv;
+            document.getElementById("clickMe").disabled = false;
+          });
+        })
+      });
+    });
+  }, function error(result) {
+    //document.getElementById("conver").innerHTML = result;
+  });
+	document.getElementById("clickMe").onclick = function() {
+    // executer les verifcations JS et si tout est ok, on passe a la suite
+    var name = document.getElementById("name").value;
+    var email = document.getElementById("email").value;
+    var telephone = document.getElementById("telephone").value;
+    var adresse = document.getElementById("adresse").value;
+    var ville = document.getElementById("ville").value;
+    function verifMail(value)
+    {
+       var regex = /^[a-zA-Z0-9._-]+@[a-z0-9._-]{2,}\.[a-z]{2,4}$/;
+       if(!regex.test(value))
+       {
+          return false;
+       }
+       else
+       {
+          return true;
+       }
+    }
+    if(name == '') {
+      document.getElementById("erreurs").innerHTML = "Le nom est obligatoire !";
+      document.getElementById("name").style.border="1px solid red";
+      document.getElementById("email").style.border="none";
+      document.getElementById("telephone").style.border="none";
+      document.getElementById("adresse").style.border="none";
+      document.getElementById("ville").style.border="none";
+    } else if(email == '') {
+      document.getElementById("erreurs").innerHTML = "L'email est obligatoire !";
+      document.getElementById("email").style.border="1px solid red";
+      document.getElementById("name").style.border="none";
+      document.getElementById("telephone").style.border="none";
+      document.getElementById("adresse").style.border="none";
+      document.getElementById("ville").style.border="none";
+    } else if(telephone == '') {
+      document.getElementById("erreurs").innerHTML = "Le téléphone est obligatoire !";
+      document.getElementById("telephone").style.border="1px solid red";
+      document.getElementById("adresse").style.border="none";
+      document.getElementById("name").style.border="none";
+      document.getElementById("email").style.border="none";
+      document.getElementById("ville").style.border="none";
+    } else if(adresse == '') {
+      document.getElementById("erreurs").innerHTML = "L'adresse est obligatoire !";
+      document.getElementById("adresse").style.border="1px solid red";
+      document.getElementById("name").style.border="none";
+      document.getElementById("email").style.border="none";
+      document.getElementById("telephone").style.border="none";
+      document.getElementById("ville").style.border="none";
+    } else if(ville == '') {
+      document.getElementById("erreurs").innerHTML = "La ville est obligatoire !";
+      document.getElementById("ville").style.border="1px solid red";
+      document.getElementById("name").style.border="none";
+      document.getElementById("email").style.border="none";
+      document.getElementById("telephone").style.border="none";
+      document.getElementById("adresse").style.border="none";
+    } else {
+
+      if(verifMail(email) == false) {
+        document.getElementById("erreurs").innerHTML = "L'email n'est pas au bon format !";
+        document.getElementById("email").style.border="1px solid red";
+        document.getElementById("name").style.border="none";
+        document.getElementById("telephone").style.border="none";
+        document.getElementById("adresse").style.border="none";
+        document.getElementById("ville").style.border="none";
+      }
+      else {
+      document.getElementById("erreurs").innerHTML = "";
+      document.getElementById("email").style.border="none";
+      document.getElementById("name").style.border="none";
+      document.getElementById("telephone").style.border="none";
+      document.getElementById("adresse").style.border="none";
+      document.getElementById("ville").style.border="none";
+      var conversation = document.getElementById("conversation").value;
+
+
+		var messageToShare = {
+			"attachment": {
+				"type": "template",
+				"payload": {
+					"template_type": "generic",
+          "image_aspect_ratio" : "square",
+					"elements": [{
+						"title": "Vos informations",
+						"image_url": "https://mon-chatbot.com/shipped.png",
+						"subtitle": "Ces informations vont permettre à nos équipes de vous faire parvenir le plus rapidement possible votre demande."
+					}]
+				}
+			}
+		};
+		MessengerExtensions.beginShareFlow(function success(response) {
+			// User dismissed without error, but did they
+			// share the message?
+      console.log("3");
+			if (response.is_sent) {
+        $.ajax({
+          method: "GET",
+          url: "traitement_adresse.php",
+          data: { email: email, telephone: telephone, name : name, adresse : adresse, ville : ville,  conversation : conversation }
+        })
+        .then(function( msg ) {
+        //  alert(msg);
+
+          MessengerExtensions.requestCloseBrowser(function success() {
+  					// webview closed
+            console.log('id_facebook'+id_facebook);
+            firebase.database().ref('accounts').orderByChild('fbid').equalTo(''+id_facebook+'').once('child_added').then(function(snapshot)  {
+              //console.log("lakey"+JSON.stringify(snapshot));
+              var lakey = snapshot.key;
+              //console.log(lakey);
+              firebase.database().ref('accounts/'+lakey).update({
+                telephone : telephone,
+                email : email,
+                adresse : adresse,
+                ville : ville
+              })
+            }).catch(function(error) {
+            //  console.log("ERREUR"+error);
+            })
+  				}, function error(err) {
+  					// an error occurred
+              //console.log("ERREUR2"+err);
+  				});
+          });
+				// The user actually did share.
+				// Perhaps close the window w/ requestCloseBrowser().
+
+			} else {}
+		}, function error(errorCode, errorMessage) {
+			// An error occurred in the process
+			//alert(errorMessage);
+		}, messageToShare, "current_thread");
+  }
+}
+};
+console.log("4");
+	//
+	// the Messenger Extensions JS SDK is done loading
+
+};
+
+
+
+</script>
+
+<header style="text-align:center;background:#00533d;"><img style="margin:10px;padding:0px" src="https://www.naturactive.fr/sites/all/themes/naturactive2016/images/logo.svg"/></header>
+<div class="container">
+  <form>
+    <p id="erreurs" style="color:red;Font-Weight: Bold;"></p>
+    <ul class="flex-outer">
+
+      <li>
+        <label for="first-name">Nom Prénom*</label>
+        <input type="text" id="name" placeholder="Entrez votre Nom et Prénom" value="">
+      </li>
+      <li>
+        <label for="email">Email*</label>
+        <input type="email" id="email" placeholder="Entrez ici votre Email" value="">
+      </li>
+      <li>
+        <input type="hidden" id="conversation" value=""/>
+        <label for="telephone">Téléphone*</label>
+        <input type="tel" id="telephone" placeholder="Entrez ici votre numero de Téléphone" value="">
+      </li>
+      <li>
+        <label for="adresse">Adresse*</label>
+        <input type="text" id="adresse" placeholder="Entrez ici votre adresse complète" value="">
+      </li>
+      <li>
+        <label for="ville">Ville*</label>
+        <input type="text" id="ville" placeholder="Entrez ici le nom de votre ville" value="">
+      </li>
+    </ul>
+  </form>
+</div>
+<nav class="fixed-nav" style="text-align:center">
+    <button id="clickMe" style="padding: 1em 5em;
+    color: #fff;
+    text-transform: uppercase;
+    white-space: normal;
+    background: #95c11f;
+    border: none;
+    -webkit-transition: all ease 0.25s;
+    -o-transition: all ease 0.25s;
+    transition: all ease 0.25s;
+    border-radius: 5px;
+    font-weight: 900;">Soumettre</button>
+</nav>
+
+    <style>
+      .fixed-nav {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        background-color: #fff;
+
+        white-space: nowrap;
+        height: 60px;
+        box-sizing: border-box;
+        padding: 10px;
+        box-shadow: 0px 3px 6px rgba(0,0,0,0.16),0px 3px 6px rgba(0,0,0,0.23);
+      }
+
+      .fixed-nav ul, .fixed-nav li {
+        display:inline;
+      }
+
+      .fixed-nav a {
+        text-decoration: none;
+        text-transform: uppercase;
+        padding: 17px 10px;
+        color: #333;
+        font-family: arial;
+      }
+
+      .fixed-nav a:hover {
+        background-color: #000;
+        color: #eee;
+      }
+
+      .fixed-nav ul {
+        padding:0;
+      }
+      .fixed-nav img {
+        vertical-align: middle;
+      }
+      main {margin-top:55px;}
+    </style>
+</body>
+</html>

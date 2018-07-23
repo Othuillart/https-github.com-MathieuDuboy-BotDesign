@@ -1,0 +1,24 @@
+{
+  "name": "faq3bis",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.18.2",
+    "crypto": "^1.0.1",
+    "express": "^4.16.2",
+    "firebase": "^4.6.0",
+    "firebase-admin": "^5.4.3",
+    "jquery": "^3.2.1",
+    "node-fetch": "^1.7.3",
+    "node-wit": "^4.3.0",
+    "request": "^2.83.0",
+    "requestify": "^0.2.5"
+  }
+}

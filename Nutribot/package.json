@@ -1,0 +1,24 @@
+{
+  "name": "nutribot2018",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.18.2",
+    "crypto": "^1.0.1",
+    "express": "^4.16.2",
+    "firebase": "^4.9.1",
+    "firebase-admin": "^5.8.2",
+    "node-fetch": "^2.0.0",
+    "node-wit": "^4.3.0",
+    "quagga": "^0.12.1",
+    "request": "^2.83.0",
+    "requestify": "^0.2.5"
+  },
+  "description": ""
+}
